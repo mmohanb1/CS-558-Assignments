@@ -4,12 +4,51 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+
+
 public class AutoKeyCipher {
 	private char[][] cipherArr;
+	private int[][] indexArr;
 	
 	public AutoKeyCipher() {
 		super();
 		this.cipherArr = generateCipherArr();
+		this.indexArr = generateIndexArr();
+//		for(int i =0;i< indexArr.length; i++)
+//		{
+//			for(int j=0; j<indexArr[0].length; j++)
+//				System.out.print(indexArr[i][j]+" ");
+//			System.out.println();
+//		}
+	}
+	public static void main(String[] args) {
+		AutoKeyCipher akc = new AutoKeyCipher();
+		String origText = "backinthedaysweusedtochill";
+		String key = "uahfiluawbhdlfawghdfkjawghj";
+		String incry = akc.encrypt(key, origText);
+		System.out.println("original text = "+origText+", key = "+key);
+		System.out.println("incrypted text = "+incry);
+		System.out.println("decypted text = "+akc.decrypt(key, incry));
+	}
+	private int[][] generateIndexArr()
+	{
+		int[][] cipherArr = new int[26][26];
+		Deque<Integer> dq = new LinkedList<>();
+		for(int i=0; i<26; i++)
+			dq.addLast(i);
+				
+		for(int i=0; i<26; i++)
+		{
+			int j=0;
+				Iterator<Integer> itr = dq.iterator();
+				while(itr.hasNext())
+				{
+					cipherArr[i][j++] = itr.next();
+				}
+			int first = dq.removeLast();
+			dq.addFirst(first);
+		}
+		return cipherArr;
 	}
 	private char[][] generateCipherArr()
 	{
@@ -31,19 +70,28 @@ public class AutoKeyCipher {
 		}
 		return cipherArr;
 	}
-	public static void main(String[] args) {
-		AutoKeyCipher akc = new AutoKeyCipher();
-		System.out.println(akc.encrypt("deceptive", "wearediscoveredsaveyourself"));
-	}
-	String decrypt(String key, String decryptedText)
+
+	private String decrypt(String key, String encryptedText)
 	{
-		for(int i=0; i<decryptedText.length(); i++)
+		StringBuilder decryptedText = new StringBuilder("");
+		StringBuilder keySeries = new StringBuilder(key);
+		
+		for(int i=0; i<encryptedText.length(); i++)
 		{
-			
+			char currKeyLetter = keySeries.charAt(i);
+			char currEncyptedLetter = encryptedText.charAt(i);
+			int row = currKeyLetter-'a';
+			int col = indexArr[row][currEncyptedLetter-'A'];
+		//	System.out.println("row = "+row+", col = "+col);
+			char currDecryptedLetter = (char)(col+97);
+		//	System.out.println(currDecryptedLetter);
+			decryptedText.append(currDecryptedLetter);
+			keySeries.append(currDecryptedLetter);
 		}
-		return "";
+		return decryptedText.toString();
 	}
-	String encrypt(String key, String plainText)
+
+	private String encrypt(String key, String plainText)
 	{
 		StringBuilder keySeries = new StringBuilder(key);
 		keySeries.append(plainText);
