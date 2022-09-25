@@ -1,35 +1,66 @@
-package com.ics.assignments;
-
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-
-
-public class AutoKeyCipher {
+public class Auto {
 	private char[][] cipherArr;
 	private int[][] indexArr;
 	
-	public AutoKeyCipher() {
+	public Auto() {
 		super();
 		this.cipherArr = generateCipherArr();
 		this.indexArr = generateIndexArr();
-//		for(int i =0;i< indexArr.length; i++)
-//		{
-//			for(int j=0; j<indexArr[0].length; j++)
-//				System.out.print(indexArr[i][j]+" ");
-//			System.out.println();
-//		}
+
 	}
 	public static void main(String[] args) {
-		AutoKeyCipher akc = new AutoKeyCipher();
-		String origText = "backinthedaysweusedtochill";
-		String key = "uahfiluawbhdlfawghdfkjawghj";
-		String incry = akc.encrypt(key, origText);
-		System.out.println("original text = "+origText+", key = "+key);
-		System.out.println("incrypted text = "+incry);
-		System.out.println("decypted text = "+akc.decrypt(key, incry));
-	}
+		Auto akc = new Auto();
+		String inFileName = args[0];
+		String outFileName = args[1];
+		String origText = "";
+		try {
+            FileReader r = new FileReader(inFileName);
+            BufferedReader br = new BufferedReader(r);
+ 
+            String line; 
+            while ((line = br.readLine()) != null)                
+                origText = line;
+            
+            r.close();
+ 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		
+		String key = args[2];
+		
+		int type = Integer.parseInt(args[3]);
+		String contentToWrite = "";
+		if(type == 1) //encrypt
+		{
+			contentToWrite = akc.encrypt(key, origText);
+		}
+		else if(type == 0) //decrypt
+		{
+			contentToWrite = akc.decrypt(key, origText);
+		}
+		try {
+            FileWriter w = new FileWriter(outFileName, true);
+            BufferedWriter bw = new BufferedWriter(w); 
+            bw.write(contentToWrite);
+    
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+	
+	
 	private int[][] generateIndexArr()
 	{
 		int[][] cipherArr = new int[26][26];
@@ -107,4 +138,3 @@ public class AutoKeyCipher {
 		return encryptedText.toString();
 	}
 }
-
